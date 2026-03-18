@@ -144,6 +144,16 @@ with col2:
     if st.button("Open Prompt Generator", key="pg", use_container_width=True):
         st.switch_page("pages/6_Prompt_Generator.py")
 
+st.markdown("""
+<div class="feature-box" style="border: 2px solid #0f3460;">
+    <h3>7. AI Forensic Generator (NEW)</h3>
+    <p><b>Hybrid AI:</b> Claude CLI + Ollama | Say a company name, get full forensic analysis with pattern matching.</p>
+    <p><b>Features:</b> Pulls from extracted annual reports (D:\\Annual_report_extract), RAG knowledge base, PDF red flag scan, 7 fraud pattern checks, risk scoring.</p>
+</div>
+""", unsafe_allow_html=True)
+if st.button("Open AI Forensic Generator", key="aifg", use_container_width=True, type="primary"):
+    st.switch_page("pages/7_AI_Forensic_Generator.py")
+
 st.divider()
 
 # Quick reference
