@@ -1,0 +1,14 @@
+__pycache__/
+*.pyc
+.env
+*.egg-info/
+dist/
+build/
+.streamlit/secrets.toml
+app/data/chroma_db/
+app/data/embeddings/
+extracted/
+*.pdf
+venv/
+.venv/
+node_modules/
