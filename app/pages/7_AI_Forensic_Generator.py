@@ -188,6 +188,22 @@ with tab_company:
                     status.update(label="PDF scan complete", state="complete")
 
             # Step 4: Build the comprehensive prompt
+            # Pre-calculate ratios safely
+            def _fmt(val, fmt=".1f"):
+                try:
+                    return f"{val:{fmt}}" if val is not None else "N/A"
+                except (TypeError, ValueError):
+                    return "N/A"
+
+            _r_opm = _fmt(((financials.revenue - financials.raw_material_cost - financials.employee_cost - financials.other_expenses) / financials.revenue * 100) if financials.revenue else None)
+            _r_npm = _fmt((financials.pat / financials.revenue * 100) if financials.revenue else None)
+            _r_nfat = _fmt((financials.revenue / financials.net_fixed_assets) if financials.net_fixed_assets else None, ".2f")
+            _r_recv_days = _fmt((financials.trade_receivables / financials.revenue * 365) if financials.revenue else None, ".0f")
+            _r_de = _fmt((financials.total_debt / financials.equity) if financials.equity else None, ".2f")
+            _r_tax = _fmt((financials.tax / financials.pbt * 100) if financials.pbt else None)
+            _r_rm = _fmt((financials.raw_material_cost / financials.revenue * 100) if financials.revenue else None)
+            _r_emp = _fmt((financials.employee_cost / financials.revenue * 100) if financials.revenue else None)
+
             financial_summary = f"""
 EXTRACTED FINANCIAL DATA for {company_name} (ID: {company_id}, {year}, {qualifier}):
 Unit: {financials.unit} INR
@@ -221,14 +237,14 @@ CASH FLOW:
 - CFF: {financials.cff:,.2f}
 
 CALCULATED RATIOS:
-- OPM: {((financials.revenue - financials.raw_material_cost - financials.employee_cost - financials.other_expenses) / financials.revenue * 100) if financials.revenue else 'N/A':.1f}%
-- NPM: {(financials.pat / financials.revenue * 100) if financials.revenue else 'N/A':.1f}%
-- NFAT: {(financials.revenue / financials.net_fixed_assets) if financials.net_fixed_assets else 'N/A':.2f}
-- Receivables Days: {(financials.trade_receivables / financials.revenue * 365) if financials.revenue else 'N/A':.0f}
-- Debt/Equity: {(financials.total_debt / financials.equity) if financials.equity else 'N/A':.2f}
-- Tax Payout: {(financials.tax / financials.pbt * 100) if financials.pbt else 'N/A':.1f}%
-- Raw Material % of Sales: {(financials.raw_material_cost / financials.revenue * 100) if financials.revenue else 'N/A':.1f}%
-- Employee Cost % of Sales: {(financials.employee_cost / financials.revenue * 100) if financials.revenue else 'N/A':.1f}%
+- OPM: {_r_opm}%
+- NPM: {_r_npm}%
+- NFAT: {_r_nfat}
+- Receivables Days: {_r_recv_days}
+- Debt/Equity: {_r_de}
+- Tax Payout: {_r_tax}%
+- Raw Material % of Sales: {_r_rm}%
+- Employee Cost % of Sales: {_r_emp}%
 """
 
             full_prompt = f"""Perform a comprehensive forensic analysis of {company_name}.
